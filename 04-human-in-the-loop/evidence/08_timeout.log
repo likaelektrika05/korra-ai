@@ -1,0 +1,51 @@
+﻿
+======================================================================
+  S4: TIMEOUT -> TREATED AS REJECT, LATE APPROVAL REFUSED
+  2026-10-26 00:17:42
+======================================================================
+PS> korra ask --thread demo-timeout --user student Please add a student: Eli Moss, eli@sdsu.edu, Chemistry, 3.0, 2026-10-26
+[student@demo-timeout] Please add a student: Eli Moss, eli@sdsu.edu, Chemistry, 3.0, 2026-10-26
+[korra] proposes save_student_record({"name": "Eli Moss", "email": "eli@sdsu.edu", "major": "Chemistry", "gpa": 3.0, "enrollment_date": "2026-10-26"})
+--------------------------------------------------------------------
+APPROVAL REQUIRED   decision_id: D-d7ee6cb39301
+--------------------------------------------------------------------
+Protected action : save_student_record
+Requested by     : student
+Original request : Please add a student: Eli Moss, eli@sdsu.edu, Chemistry, 3.0, 2026-10-26
+Proposed values  :
+    name            = Eli Moss
+    email           = eli@sdsu.edu
+    major           = Chemistry
+    gpa             = 3.0
+    enrollment_date = 2026-10-26
+Relevant state   :
+    students_on_record    = 8
+    email_already_used_by = None
+    validation_problems   = []
+Allowed decisions: approve, reject, revise, cancel
+Times out after  : 600 s (treated as reject)
+Status           : PENDING - nothing has been written to the database
+--------------------------------------------------------------------
+DECISION_ID=D-d7ee6cb39301
+(exit 0)
+# Waiting 10 seconds with a 5-second timeout for this run ...
+PS> korra sweep
+TIMEOUT D-d7ee6cb39301: no decision within 5 s (waited 17 s) -> treated as reject
+[approval_gate] result: {"status": "timed_out", "decision_id": "D-d7ee6cb39301", "reviewer": "system", "reason": "no decision within 5 s (waited 17 s)", "message": "Nothing was saved."}
+[korra] Korra: It seems there was a timeout while trying to save the student record for Eli Moss. Unfortunately, nothing was saved. Would you like to try adding the student again?
+Timed out 1 decision(s) (limit 5 s).
+(exit 0)
+# A late approval is refused: the decision already timed out.
+PS> korra decide D-d7ee6cb39301 approve --by lia.surguladze
+REFUSED: decision D-d7ee6cb39301 is already timed_out by system; it cannot be decided again
+(exit 2)
+PS> korra students
+  #1   Alice Johnson          alice@sdsu.edu           Computer Science         3.8  2024-08-20
+  #2   Bob Smith              bob@sdsu.edu             Mathematics              3.5  2024-08-20
+  #3   Carol Davis            carol@sdsu.edu           Computer Science         3.9  2024-08-20
+  #4   David Wilson           david@sdsu.edu           Engineering              3.7  2024-08-20
+  #5   Eve Martinez           eve@sdsu.edu             Mathematics              3.6  2024-08-20
+  #6   Ana Lopez              ana@sdsu.edu             Computer Engineering     3.6  2026-10-26
+  #7   Cara Kim               cara@sdsu.edu            Applied Mathematics      3.7  2026-10-26
+  #8   Finn Oak               finn@sdsu.edu            History                  3.4  2026-10-26
+(exit 0)

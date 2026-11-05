@@ -1,0 +1,92 @@
+﻿
+======================================================================
+  S4: RESTART WITH THE PENDING DECISION PRESERVED
+  2026-10-26 00:17:15
+======================================================================
+PS> korra ask --thread demo-restart --user student Please add a student: Finn Oak, finn@sdsu.edu, History, 3.4, 2026-10-26
+[student@demo-restart] Please add a student: Finn Oak, finn@sdsu.edu, History, 3.4, 2026-10-26
+[korra] proposes save_student_record({"name": "Finn Oak", "email": "finn@sdsu.edu", "major": "History", "gpa": 3.4, "enrollment_date": "2026-10-26"})
+--------------------------------------------------------------------
+APPROVAL REQUIRED   decision_id: D-8013f82a3ce0
+--------------------------------------------------------------------
+Protected action : save_student_record
+Requested by     : student
+Original request : Please add a student: Finn Oak, finn@sdsu.edu, History, 3.4, 2026-10-26
+Proposed values  :
+    name            = Finn Oak
+    email           = finn@sdsu.edu
+    major           = History
+    gpa             = 3.4
+    enrollment_date = 2026-10-26
+Relevant state   :
+    students_on_record    = 7
+    email_already_used_by = None
+    validation_problems   = []
+Allowed decisions: approve, reject, revise, cancel
+Times out after  : 600 s (treated as reject)
+Status           : PENDING - nothing has been written to the database
+--------------------------------------------------------------------
+DECISION_ID=D-8013f82a3ce0
+(exit 0)
+# Destroy every container (the named volume is kept) ...
+PS> docker compose down
+ Container korra11-db Stopping 
+ Container korra11-db Stopped 
+ Container korra11-db Removing 
+ Container korra11-db Removed 
+ Network k11_default Removing 
+ Network k11_default Removed 
+PS> docker compose ps -a
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+# ... and start a brand-new database container on the same volume.
+PS> docker compose up -d --wait db
+ Network k11_default Creating 
+ Network k11_default Creating 
+ Network k11_default Created 
+ Network k11_default Created 
+ Container korra11-db Creating 
+ Container korra11-db Created 
+ Container korra11-db Starting 
+ Container korra11-db Started 
+ Container korra11-db Waiting 
+ Container korra11-db Healthy 
+PS> docker compose logs db --tail 20
+korra11-db  | 
+korra11-db  | PostgreSQL Database directory appears to contain a database; Skipping initialization
+korra11-db  | 
+korra11-db  | 2026-10-26 07:17:25.936 UTC [1] LOG:  starting PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+korra11-db  | 2026-10-26 07:17:25.936 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+korra11-db  | 2026-10-26 07:17:25.936 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+korra11-db  | 2026-10-26 07:17:25.953 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+korra11-db  | 2026-10-26 07:17:25.975 UTC [29] LOG:  database system was shut down at 2026-10-26 07:17:23 UTC
+korra11-db  | 2026-10-26 07:17:25.989 UTC [1] LOG:  database system is ready to accept connections
+# The decision D-8013f82a3ce0 is still pending after the restart.
+PS> korra pending
+Pending decisions: 1   (timeout 600 s)
+  D-8013f82a3ce0  thread=demo-restart  by=student  age=13s  save Finn Oak <finn@sdsu.edu>
+(exit 0)
+PS> korra decide D-8013f82a3ce0 approve --by lia.surguladze --reason approved after restart
+ACCEPTED: approve on D-8013f82a3ce0 by lia.surguladze reason: approved after restart
+Resuming thread 'demo-restart' from its checkpoint ...
+[approval_gate]
+[save_database_node] result: {"status": "saved", "student_id": 8, "student": {"name": "Finn Oak", "email": "finn@sdsu.edu", "major": "History", "gpa": 3.4, "enrollment_date": "2026-10-26"}, "decision_id": "D-8013f82a3ce0"}
+[korra] Korra: The student record for Finn Oak has been successfully added. Here are the details:
+
+- **Name:** Finn Oak
+- **Email:** finn@sdsu.edu
+- **Major:** History
+- **GPA:** 3.4
+- **Enrollment Date:** 2026-10-26
+
+If you need anything else, feel free to ask!
+(exit 0)
+PS> korra students
+  #1   Alice Johnson          alice@sdsu.edu           Computer Science         3.8  2024-08-20
+  #2   Bob Smith              bob@sdsu.edu             Mathematics              3.5  2024-08-20
+  #3   Carol Davis            carol@sdsu.edu           Computer Science         3.9  2024-08-20
+  #4   David Wilson           david@sdsu.edu           Engineering              3.7  2024-08-20
+  #5   Eve Martinez           eve@sdsu.edu             Mathematics              3.6  2024-08-20
+  #6   Ana Lopez              ana@sdsu.edu             Computer Engineering     3.6  2026-10-26
+  #7   Cara Kim               cara@sdsu.edu            Applied Mathematics      3.7  2026-10-26
+  #8   Finn Oak               finn@sdsu.edu            History                  3.4  2026-10-26
+(exit 0)

@@ -1,0 +1,43 @@
+# ============================================================
+# Project 12 - Korra with a behavioral control layer, and PostgreSQL.
+#   db     postgres:17, Project 10 student schema seeded once on an empty volume
+#   korra  CLI image; the stable policy and template are mounted READ-ONLY,
+#          so nothing at run time can modify them.
+#     docker compose run --rm korra ask --role instructor "List all students"
+#     docker compose run --rm korra validate
+# Credentials come from .env at run time (OPENAI_API_KEY, POSTGRES_PASSWORD).
+# ============================================================
+services:
+  db:
+    image: postgres:17
+    container_name: korra12-db
+    environment:
+      POSTGRES_USER: korra
+      POSTGRES_DB: korra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - korra12_pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U korra -d korra"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  korra:
+    build: ./korra
+    image: korra12-react
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://korra:${POSTGRES_PASSWORD}@db:5432/korra
+    volumes:
+      - ./prompts:/app/prompts:ro
+      - ./tests:/app/tests:ro
+      - ./evidence:/app/evidence
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  korra12_pgdata:

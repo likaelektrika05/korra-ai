@@ -1,0 +1,12 @@
+Hello LangGraph!
+This is a test file for our C-based file statistics tool.
+It has multiple lines and various words.
+
+The tool will count:
+- Lines (like this one)
+- Words in each line
+- Total characters including spaces and newlines
+- File size in bytes
+
+This demonstrates how C programs can integrate with AI agents
+through LangGraph's tool system for efficient file processing.

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "korra-p11/decision.json",
+  "title": "Korra human-oversight decision (Project 11)",
+  "description": "Payload a reviewer sends to resume a paused save_student_record. Built and validated by `korra decide`; passed to LangGraph as Command(resume=...).",
+  "type": "object",
+  "required": ["decision", "actor"],
+  "additionalProperties": false,
+  "properties": {
+    "decision": {
+      "enum": ["approve", "reject", "revise", "cancel", "timeout"],
+      "description": "timeout is produced only by the system when HITL_TIMEOUT_SECONDS passes"
+    },
+    "actor": {
+      "type": "string",
+      "description": "Reviewer listed in AUTHORIZED_REVIEWERS; for cancel, may also be the original requester; 'system' for timeout"
+    },
+    "reason": { "type": ["string", "null"], "maxLength": 500 },
+    "revisions": {
+      "type": "object",
+      "description": "Required and non-empty when decision = revise; ignored otherwise",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "major": { "type": "string", "minLength": 1 },
+        "gpa": { "type": "number", "minimum": 0.0, "maximum": 4.0 },
+        "enrollment_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "decision": { "const": "revise" } } },
+      "then": { "required": ["revisions"], "properties": { "revisions": { "minProperties": 1 } } }
+    }
+  ],
+  "$defs": {
+    "decision_record": {
+      "description": "Row in hitl_decisions",
+      "type": "object",
+      "properties": {
+        "decision_id": { "type": "string", "pattern": "^D-[0-9a-f]{12}$" },
+        "thread_id": { "type": "string" },
+        "tool_call_id": { "type": "string" },
+        "action": { "const": "save_student_record" },
+        "requested_by": { "type": "string" },
+        "request_text": { "type": "string" },
+        "proposed_args": { "type": "object" },
+        "final_args": { "type": ["object", "null"] },
+        "status": { "enum": ["pending", "approved", "revised", "rejected", "cancelled", "timed_out"] },
+        "reviewer": { "type": ["string", "null"] },
+        "reason": { "type": ["string", "null"] },
+        "created_at": { "type": "string", "format": "date-time" },
+        "decided_at": { "type": ["string", "null"], "format": "date-time" },
+        "executed": { "type": "boolean" },
+        "executed_at": { "type": ["string", "null"], "format": "date-time" },
+        "result": { "type": ["object", "null"] }
+      }
+    }
+  }
+}

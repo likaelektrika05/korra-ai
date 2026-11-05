@@ -1,0 +1,75 @@
+﻿
+======================================================================
+  S2: INTERRUPT BEFORE THE PROTECTED ACTION + CHECKPOINTED STATE
+  2026-10-26 00:14:45
+======================================================================
+# Student asks Korra to add a student. Korra proposes save_student_record; approval_gate interrupts.
+PS> korra ask --thread demo-approve --user student Please add a student: Ana Lopez, ana@sdsu.edu, Computer Engineering, 3.6, 2026-10-26
+[student@demo-approve] Please add a student: Ana Lopez, ana@sdsu.edu, Computer Engineering, 3.6, 2026-10-26
+[korra] proposes save_student_record({"name": "Ana Lopez", "email": "ana@sdsu.edu", "major": "Computer Engineering", "gpa": 3.6, "enrollment_date": "2026-10-26"})
+--------------------------------------------------------------------
+APPROVAL REQUIRED   decision_id: D-7a980de97f16
+--------------------------------------------------------------------
+Protected action : save_student_record
+Requested by     : student
+Original request : Please add a student: Ana Lopez, ana@sdsu.edu, Computer Engineering, 3.6, 2026-10-26
+Proposed values  :
+    name            = Ana Lopez
+    email           = ana@sdsu.edu
+    major           = Computer Engineering
+    gpa             = 3.6
+    enrollment_date = 2026-10-26
+Relevant state   :
+    students_on_record    = 5
+    email_already_used_by = None
+    validation_problems   = []
+Allowed decisions: approve, reject, revise, cancel
+Times out after  : 600 s (treated as reject)
+Status           : PENDING - nothing has been written to the database
+--------------------------------------------------------------------
+DECISION_ID=D-7a980de97f16
+(exit 0)
+# The pending decision is listed with its stable ID (D-7a980de97f16).
+PS> korra pending
+Pending decisions: 1   (timeout 600 s)
+  D-7a980de97f16  thread=demo-approve  by=student  age=8s  save Ana Lopez <ana@sdsu.edu>
+(exit 0)
+# Nothing was written while approval is pending (no Ana Lopez in the table).
+PS> korra students
+  #1   Alice Johnson          alice@sdsu.edu           Computer Science         3.8  2024-08-20
+  #2   Bob Smith              bob@sdsu.edu             Mathematics              3.5  2024-08-20
+  #3   Carol Davis            carol@sdsu.edu           Computer Science         3.9  2024-08-20
+  #4   David Wilson           david@sdsu.edu           Engineering              3.7  2024-08-20
+  #5   Eve Martinez           eve@sdsu.edu             Mathematics              3.6  2024-08-20
+(exit 0)
+# The thread's checkpoint: next node is approval_gate (paused).
+PS> korra history --thread demo-approve
+  user : Please add a student: Ana Lopez, ana@sdsu.edu, Computer Engineering, 3.6, 2026-10-26
+  korra: proposes save_student_record({"name": "Ana Lopez", "email": "ana@sdsu.edu", "major": "Computer Engineering", "gpa": 3.6, "enrollment_date": "2026-10-26"})
+  next : ('approval_gate',)
+(exit 0)
+# Sending another message on the paused thread does NOT continue it.
+PS> korra ask --thread demo-approve --user student hello, are you done?
+Thread 'demo-approve' is paused on D-7a980de97f16. A reviewer must decide before the conversation continues.
+--------------------------------------------------------------------
+APPROVAL REQUIRED   decision_id: D-7a980de97f16
+--------------------------------------------------------------------
+Protected action : save_student_record
+Requested by     : student
+Original request : Please add a student: Ana Lopez, ana@sdsu.edu, Computer Engineering, 3.6, 2026-10-26
+Proposed values  :
+    name            = Ana Lopez
+    email           = ana@sdsu.edu
+    major           = Computer Engineering
+    gpa             = 3.6
+    enrollment_date = 2026-10-26
+Relevant state   :
+    students_on_record    = 5
+    email_already_used_by = None
+    validation_problems   = []
+Allowed decisions: approve, reject, revise, cancel
+Times out after  : 600 s (treated as reject)
+Status           : PENDING - nothing has been written to the database
+--------------------------------------------------------------------
+DECISION_ID=D-7a980de97f16
+(exit 2)

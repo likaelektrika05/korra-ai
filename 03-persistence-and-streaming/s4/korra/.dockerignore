@@ -1,0 +1,10 @@
+# Keys and passwords arrive at run time, never baked into the image
+.env
+.env.*
+# Section 3's SQLite file is not used here (PostgreSQL holds the records)
+*.db
+# Local caches and build output
+**/__pycache__
+**/*.pyc
+**/*.egg-info
+.langgraph_api

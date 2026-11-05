@@ -1,0 +1,43 @@
+﻿
+======================================================================
+  S3: CANCEL BY THE REQUESTER -> WORKFLOW TERMINATES
+  2026-10-26 00:16:58
+======================================================================
+PS> korra ask --thread demo-cancel --user dana Please add a student: Dana Park, dana@sdsu.edu, Biology, 3.3, 2026-10-26
+[dana@demo-cancel] Please add a student: Dana Park, dana@sdsu.edu, Biology, 3.3, 2026-10-26
+[korra] proposes save_student_record({"name": "Dana Park", "email": "dana@sdsu.edu", "major": "Biology", "gpa": 3.3, "enrollment_date": "2026-10-26"})
+--------------------------------------------------------------------
+APPROVAL REQUIRED   decision_id: D-9f1c3014924f
+--------------------------------------------------------------------
+Protected action : save_student_record
+Requested by     : dana
+Original request : Please add a student: Dana Park, dana@sdsu.edu, Biology, 3.3, 2026-10-26
+Proposed values  :
+    name            = Dana Park
+    email           = dana@sdsu.edu
+    major           = Biology
+    gpa             = 3.3
+    enrollment_date = 2026-10-26
+Relevant state   :
+    students_on_record    = 7
+    email_already_used_by = None
+    validation_problems   = []
+Allowed decisions: approve, reject, revise, cancel
+Times out after  : 600 s (treated as reject)
+Status           : PENDING - nothing has been written to the database
+--------------------------------------------------------------------
+DECISION_ID=D-9f1c3014924f
+(exit 0)
+PS> korra decide D-9f1c3014924f cancel --by dana --reason entered by mistake
+ACCEPTED: cancel on D-9f1c3014924f by dana reason: entered by mistake
+Resuming thread 'demo-cancel' from its checkpoint ...
+[approval_gate] result: {"status": "cancelled", "decision_id": "D-9f1c3014924f", "reviewer": "dana", "reason": "entered by mistake", "message": "Nothing was saved."}
+[approval_gate] Korra: The save request D-9f1c3014924f was cancelled by dana. Nothing was saved.
+(exit 0)
+PS> korra history --thread demo-cancel
+  user : Please add a student: Dana Park, dana@sdsu.edu, Biology, 3.3, 2026-10-26
+  korra: proposes save_student_record({"name": "Dana Park", "email": "dana@sdsu.edu", "major": "Biology", "gpa": 3.3, "enrollment_date": "2026-10-26"})
+  tool : {"status": "cancelled", "decision_id": "D-9f1c3014924f", "reviewer": "dana", "reason": "entered by mistake", "message": "Nothing was saved."}
+  korra: The save request D-9f1c3014924f was cancelled by dana. Nothing was saved.
+  next : (finished)
+(exit 0)

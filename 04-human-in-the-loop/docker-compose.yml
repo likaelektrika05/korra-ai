@@ -1,0 +1,45 @@
+# ============================================================
+# Project 11 - supervised Korra and PostgreSQL.
+#
+#   db     postgres:17. Holds the students tables (seeded once by
+#          schema.sql on an empty volume), the LangGraph checkpoints,
+#          hitl_decisions and hitl_audit - all in the named volume.
+#   korra  the CLI image. Run one command per container:
+#            docker compose run --rm korra ask --thread t1 "..."
+#            docker compose run --rm korra pending
+#            docker compose run --rm korra decide D-xxxx approve --by lia.surguladze
+#
+# Credentials come from .env at run time (OPENAI_API_KEY, POSTGRES_PASSWORD).
+# ============================================================
+services:
+  db:
+    image: postgres:17
+    container_name: korra11-db
+    environment:
+      POSTGRES_USER: korra
+      POSTGRES_DB: korra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - korra11_pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U korra -d korra"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  korra:
+    build: ./korra
+    image: korra11-hitl
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://korra:${POSTGRES_PASSWORD}@db:5432/korra
+      AUTHORIZED_REVIEWERS: ${AUTHORIZED_REVIEWERS:-lia.surguladze,prof.nunez}
+      HITL_TIMEOUT_SECONDS: ${HITL_TIMEOUT_SECONDS:-600}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  korra11_pgdata:

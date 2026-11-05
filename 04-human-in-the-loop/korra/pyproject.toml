@@ -1,0 +1,26 @@
+[project]
+name = "korra-hitl"
+version = "0.11.0"
+description = "Korra Project 11: human approval before protected database writes."
+authors = [{ name = "Lia Surguladze" }]
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph>=1.2.11",
+    "langgraph-checkpoint-postgres>=3.0",
+    "langchain-openai>=1.6.0",
+    "langchain-core>=1.2.0",
+    "psycopg[binary]>=3.2",
+]
+
+[project.scripts]
+korra-hitl = "korra_hitl.cli:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["korra_hitl"]
+
+[tool.setuptools.package-dir]
+"korra_hitl" = "src/korra_hitl"

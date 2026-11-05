@@ -1,0 +1,48 @@
+# ============================================================
+# Project 10, Section 4 - Korra and PostgreSQL as two services.
+#
+#   db     postgres:17, data in the named volume korra_pgdata.
+#          schema.sql seeds the tables only when the volume is empty.
+#   korra  the Section 3 graph + tools, served by langgraph dev on 2024.
+#          Starts only after db reports healthy (depends_on condition).
+#
+# Credentials come from .env beside this file at run time:
+#   OPENAI_API_KEY, POSTGRES_PASSWORD (and optionally LANGSMITH_API_KEY)
+#
+#   docker compose up --build -d      start (first run seeds the volume)
+#   docker compose down               remove containers, KEEP the volume
+#   docker compose down -v            remove containers AND the data
+# ============================================================
+services:
+  db:
+    image: postgres:17
+    container_name: korra-db
+    environment:
+      POSTGRES_USER: korra
+      POSTGRES_DB: korra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - korra_pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U korra -d korra"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  korra:
+    build: ./korra
+    container_name: korra-backend
+    env_file:
+      - .env
+    environment:
+      # Only the connection changes from Section 3: SQLite file -> this server
+      DATABASE_URL: postgresql://korra:${POSTGRES_PASSWORD}@db:5432/korra
+    ports:
+      - "2024:2024"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  korra_pgdata:

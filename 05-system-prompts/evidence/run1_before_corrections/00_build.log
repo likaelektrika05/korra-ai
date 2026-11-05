@@ -1,0 +1,76 @@
+﻿
+======================================================================
+  BUILD AND START (db healthy before korra runs)
+  2026-10-26 00:48:30
+======================================================================
+PS> docker compose up -d --build --wait db
+ Container korra12-db Running 
+ Container korra12-db Waiting 
+ Container korra12-db Healthy 
+PS> docker compose build korra
+ Image korra12-react Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 473B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 755B 0.0s done
+#2 DONE 0.0s
+
+#3 [auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#4 [internal] load metadata for docker.io/library/python:3.11-slim
+#4 DONE 5.6s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 90B done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 DONE 0.0s
+
+#7 [1/7] FROM docker.io/library/python:3.11-slim@sha256:b7a9e5f6a93d6d4a31f129bbd4bdee69efccb6ded0fb230d78aafaf37af98377
+#7 resolve docker.io/library/python:3.11-slim@sha256:b7a9e5f6a93d6d4a31f129bbd4bdee69efccb6ded0fb230d78aafaf37af98377 0.1s done
+#7 DONE 0.1s
+
+#6 [internal] load build context
+#6 transferring context: 488B 0.0s done
+#6 DONE 0.0s
+
+#8 [2/7] WORKDIR /app
+#8 CACHED
+
+#9 [4/7] RUN pip install --no-cache-dir -r requirements.txt
+#9 CACHED
+
+#10 [6/7] COPY src/ ./src/
+#10 CACHED
+
+#11 [3/7] COPY requirements.txt ./
+#11 CACHED
+
+#12 [5/7] COPY pyproject.toml ./
+#12 CACHED
+
+#13 [7/7] RUN pip install --no-cache-dir --no-deps -e .
+#13 CACHED
+
+#14 exporting to image
+#14 exporting layers 0.0s done
+#14 exporting manifest sha256:7a38bb522857e067cdd198cc97522d36aebbe5a91b782e004e9f9b250c9daff4 0.0s done
+#14 exporting config sha256:07a12f3602abaf0ad3f0b16fe17657c2a456fa311108da2d92e90025839e21ce done
+#14 exporting attestation manifest sha256:e544744d373ca3bf6bd587e7e4dd3deecde7cc63faf1081c71aed75d17d49509
+#14 exporting attestation manifest sha256:e544744d373ca3bf6bd587e7e4dd3deecde7cc63faf1081c71aed75d17d49509 0.1s done
+#14 exporting manifest list sha256:2561de2ce3ba88fa562fdb9d44e0b0b2cb9ed546ee0d9b3a61234b28fe8f8b12 0.1s done
+#14 naming to docker.io/library/korra12-react:latest
+#14 naming to docker.io/library/korra12-react:latest 0.0s done
+#14 unpacking to docker.io/library/korra12-react:latest 0.0s done
+#14 DONE 0.4s
+
+#15 resolving provenance for metadata file
+#15 DONE 0.0s
+ Image korra12-react Built 
+PS> docker compose ps
+NAME         IMAGE         COMMAND                  SERVICE   CREATED         STATUS                   PORTS
+korra12-db   postgres:17   "docker-entrypoint.sΓÇª"   db        7 minutes ago   Up 7 minutes (healthy)   5432/tcp

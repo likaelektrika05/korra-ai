@@ -1,0 +1,8 @@
+services:
+  korra:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: korra-phase-01
+    stdin_open: true
+    tty: true

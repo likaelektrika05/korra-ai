@@ -1,0 +1,29 @@
+stateDiagram-v2
+    direction TB
+    [*] --> pending: interrupt() at approval_gate
+    pending --> approved: approve
+    pending --> revised: revise
+    pending --> rejected: reject
+    pending --> cancelled: cancel
+    pending --> timed_out: timeout
+    approved --> executed: save once
+    revised --> executed: save once
+    rejected --> [*]
+    timed_out --> [*]
+    cancelled --> [*]
+    executed --> [*]
+    note right of pending
+        Checkpoint saved in PostgreSQL, stable decision_id issued.
+        Refused, stays pending: unauthorized actor, invalid value,
+        unknown id, invalid revision. Paused thread refuses new input.
+    end note
+    note left of executed
+        Insert + executed=true in ONE transaction.
+        A second run returns duplicate_prevented.
+        A second decision is refused (already decided).
+    end note
+    note right of timed_out
+        No decision within HITL_TIMEOUT_SECONDS:
+        treated as reject, later decisions refused.
+        Rejected / timed_out / cancelled save nothing.
+    end note

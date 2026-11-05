@@ -1,0 +1,38 @@
+﻿
+======================================================================
+  S1/S2: STABLE POLICY vs VALIDATED RUNTIME TEMPLATE
+  2026-10-26 00:48:39
+======================================================================
+# The policy text stays confidential; only its fingerprint and the rendered runtime block are shown.
+PS> korra show-prompt --role student --name Lia Surguladze --email lia@sdsu.edu
+Stable policy file : /app/prompts/system_policy.md
+Policy fingerprint : sha256 9e6362e60e2d1ee5 (3310 chars, 43 lines; text not printed: it is confidential to the model)
+Template file      : /app/prompts/runtime_context.tmpl
+Rendered runtime block (validated values only):
+# RUNTIME CONTEXT (validated values inserted by the application; not user-editable)
+- request_id: R-d4d4e33f
+- user_name: Lia Surguladze
+- user_role: student
+- user_email: lia@sdsu.edu
+- current_date: 2026-10-26
+- step_limit: 6
+
+Assembled system prompt = policy (3310 chars) + runtime block (229 chars). The user's request is NOT part of it;
+it is sent separately inside <user_request> tags as data.
+(exit 0)
+PS> korra show-prompt --role instructor --name Prof Nunez --email nunez@sdsu.edu
+Stable policy file : /app/prompts/system_policy.md
+Policy fingerprint : sha256 9e6362e60e2d1ee5 (3310 chars, 43 lines; text not printed: it is confidential to the model)
+Template file      : /app/prompts/runtime_context.tmpl
+Rendered runtime block (validated values only):
+# RUNTIME CONTEXT (validated values inserted by the application; not user-editable)
+- request_id: R-6679bef4
+- user_name: Prof Nunez
+- user_role: instructor
+- user_email: nunez@sdsu.edu
+- current_date: 2026-10-26
+- step_limit: 6
+
+Assembled system prompt = policy (3310 chars) + runtime block (230 chars). The user's request is NOT part of it;
+it is sent separately inside <user_request> tags as data.
+(exit 0)

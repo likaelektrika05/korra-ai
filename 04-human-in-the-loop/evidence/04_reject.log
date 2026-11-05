@@ -1,0 +1,44 @@
+﻿
+======================================================================
+  S3: REJECT -> NOTHING SAVED, KORRA EXPLAINS
+  2026-10-26 00:16:15
+======================================================================
+PS> korra ask --thread demo-reject --user student Please add a student: Ben Ruiz, ben@sdsu.edu, Physics, 3.1, 2026-10-26
+[student@demo-reject] Please add a student: Ben Ruiz, ben@sdsu.edu, Physics, 3.1, 2026-10-26
+[korra] proposes save_student_record({"name": "Ben Ruiz", "email": "ben@sdsu.edu", "major": "Physics", "gpa": 3.1, "enrollment_date": "2026-10-26"})
+--------------------------------------------------------------------
+APPROVAL REQUIRED   decision_id: D-ad5c33e7196d
+--------------------------------------------------------------------
+Protected action : save_student_record
+Requested by     : student
+Original request : Please add a student: Ben Ruiz, ben@sdsu.edu, Physics, 3.1, 2026-10-26
+Proposed values  :
+    name            = Ben Ruiz
+    email           = ben@sdsu.edu
+    major           = Physics
+    gpa             = 3.1
+    enrollment_date = 2026-10-26
+Relevant state   :
+    students_on_record    = 6
+    email_already_used_by = None
+    validation_problems   = []
+Allowed decisions: approve, reject, revise, cancel
+Times out after  : 600 s (treated as reject)
+Status           : PENDING - nothing has been written to the database
+--------------------------------------------------------------------
+DECISION_ID=D-ad5c33e7196d
+(exit 0)
+PS> korra decide D-ad5c33e7196d reject --by prof.nunez --reason not a registered applicant
+ACCEPTED: reject on D-ad5c33e7196d by prof.nunez reason: not a registered applicant
+Resuming thread 'demo-reject' from its checkpoint ...
+[approval_gate] result: {"status": "rejected", "decision_id": "D-ad5c33e7196d", "reviewer": "prof.nunez", "reason": "not a registered applicant", "message": "Nothing was saved."}
+[korra] Korra: The attempt to add the student Ben Ruiz was rejected because he is not a registered applicant. Therefore, nothing was saved. If you have any other students to add or need assistance, feel free to ask!
+(exit 0)
+PS> korra students
+  #1   Alice Johnson          alice@sdsu.edu           Computer Science         3.8  2024-08-20
+  #2   Bob Smith              bob@sdsu.edu             Mathematics              3.5  2024-08-20
+  #3   Carol Davis            carol@sdsu.edu           Computer Science         3.9  2024-08-20
+  #4   David Wilson           david@sdsu.edu           Engineering              3.7  2024-08-20
+  #5   Eve Martinez           eve@sdsu.edu             Mathematics              3.6  2024-08-20
+  #6   Ana Lopez              ana@sdsu.edu             Computer Engineering     3.6  2026-10-26
+(exit 0)

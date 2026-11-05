@@ -1,0 +1,62 @@
+﻿
+======================================================================
+  S3: REVISE -> REVIEWER CORRECTS VALUES, THEN SAVE RUNS ONCE
+  2026-10-26 00:16:33
+======================================================================
+PS> korra ask --thread demo-revise --user student Please add a student: Cara Kim, cara@sdsu.edu, Mathematics, 3.2, 2026-10-26
+[student@demo-revise] Please add a student: Cara Kim, cara@sdsu.edu, Mathematics, 3.2, 2026-10-26
+[korra] proposes save_student_record({"name": "Cara Kim", "email": "cara@sdsu.edu", "major": "Mathematics", "gpa": 3.2, "enrollment_date": "2026-10-26"})
+--------------------------------------------------------------------
+APPROVAL REQUIRED   decision_id: D-24ba7d4bd583
+--------------------------------------------------------------------
+Protected action : save_student_record
+Requested by     : student
+Original request : Please add a student: Cara Kim, cara@sdsu.edu, Mathematics, 3.2, 2026-10-26
+Proposed values  :
+    name            = Cara Kim
+    email           = cara@sdsu.edu
+    major           = Mathematics
+    gpa             = 3.2
+    enrollment_date = 2026-10-26
+Relevant state   :
+    students_on_record    = 6
+    email_already_used_by = None
+    validation_problems   = []
+Allowed decisions: approve, reject, revise, cancel
+Times out after  : 600 s (treated as reject)
+Status           : PENDING - nothing has been written to the database
+--------------------------------------------------------------------
+DECISION_ID=D-24ba7d4bd583
+(exit 0)
+# Invalid revisions are refused and the decision stays pending.
+PS> korra decide D-24ba7d4bd583 revise --by lia.surguladze --set gpa=9
+REFUSED: revised record is invalid: GPA must be between 0.0 and 4.0
+(exit 2)
+PS> korra decide D-24ba7d4bd583 revise --by lia.surguladze --set color=red
+REFUSED: invalid revision 'color=red' (fields: name, email, major, gpa, enrollment_date)
+(exit 2)
+# Valid revision: GPA 3.2 -> 3.7 and major corrected.
+PS> korra decide D-24ba7d4bd583 revise --by lia.surguladze --set gpa=3.7 --set major=Applied Mathematics --reason transcript shows 3.7
+ACCEPTED: revise on D-24ba7d4bd583 by lia.surguladze (revisions: {'gpa': 3.7, 'major': 'Applied Mathematics'}) reason: transcript shows 3.7
+Resuming thread 'demo-revise' from its checkpoint ...
+[approval_gate] proposes save_student_record({"name": "Cara Kim", "email": "cara@sdsu.edu", "major": "Applied Mathematics", "gpa": 3.7, "enrollment_date": "2026-10-26"})
+[save_database_node] result: {"status": "saved", "student_id": 7, "student": {"name": "Cara Kim", "email": "cara@sdsu.edu", "major": "Applied Mathematics", "gpa": 3.7, "enrollment_date": "2026-10-26"}, "decision_id": "D-24ba7d4bd583"}
+[korra] Korra: The student record for Cara Kim has been successfully saved. Here are the details:
+
+- **Name:** Cara Kim
+- **Email:** cara@sdsu.edu
+- **Major:** Applied Mathematics
+- **GPA:** 3.7
+- **Enrollment Date:** 2026-10-26
+
+If you need anything else, feel free to ask!
+(exit 0)
+PS> korra students
+  #1   Alice Johnson          alice@sdsu.edu           Computer Science         3.8  2024-08-20
+  #2   Bob Smith              bob@sdsu.edu             Mathematics              3.5  2024-08-20
+  #3   Carol Davis            carol@sdsu.edu           Computer Science         3.9  2024-08-20
+  #4   David Wilson           david@sdsu.edu           Engineering              3.7  2024-08-20
+  #5   Eve Martinez           eve@sdsu.edu             Mathematics              3.6  2024-08-20
+  #6   Ana Lopez              ana@sdsu.edu             Computer Engineering     3.6  2026-10-26
+  #7   Cara Kim               cara@sdsu.edu            Applied Mathematics      3.7  2026-10-26
+(exit 0)

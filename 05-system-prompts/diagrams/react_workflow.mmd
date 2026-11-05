@@ -1,0 +1,15 @@
+flowchart TB
+    U[/user request: DATA in user_request tags/] --> V{validate runtime context<br/>and request}
+    V -- "invalid" --> X([error: invalid_context / invalid_input<br/>no model call])
+    V -- "valid" --> T[THINK - Thought = public reason<br/>policy + validated runtime block<br/>exactly one tool call per step]
+    T -- "ACTION: approved tool" --> A[ACT<br/>read-only tool, parameterized SQL<br/>privacy filter by role]
+    A -.->|"OBSERVATION (redacted)"| T
+    T -- "final_answer" --> F[FINISH<br/>schema validation<br/>policy-leak guard]
+    F --> R([structured KorraResponse<br/>answered / refused / needs_clarification])
+    T -- "unknown tool" --> E1([error: unapproved_action])
+    T -- "step limit reached" --> E2([error: step_limit])
+    A -- "2nd tool error" --> E3([error: tool_failure])
+    classDef stop fill:#fde2e2,stroke:#c0392b
+    classDef ok fill:#e3f4e6,stroke:#2e7d32
+    class X,E1,E2,E3 stop
+    class R ok

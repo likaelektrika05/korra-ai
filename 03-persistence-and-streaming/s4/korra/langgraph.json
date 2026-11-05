@@ -1,0 +1,8 @@
+{
+  "$schema": "https://langgra.ph/schema.json",
+  "python_version": "3.11",
+  "dependencies": ["."],
+  "graphs": {
+    "agent": "./src/korra_m10/graph.py:graph"
+  }
+}

@@ -1,0 +1,72 @@
+# ============================================================
+# Filename: .dockerignore
+# Author: Professor Denis O. Núñez
+# Email: donunez@programmingjourneys.com
+# Organization: Programming Journeys
+# Project: Project 08 - Korra Tools
+# Module: Module 08 - C Programming (Part II)
+# Layer: Deployment - Container
+# Date Created: October 15, 2025
+# Date Modified: October 4, 2026
+# Version: 4.0
+# License: Educational Use
+#
+# Description: Excludes unnecessary files from the Docker build context. The
+# context is now the Fall 26 Files folder, so this also keeps secrets, Windows
+# build output, and the duplicate copies of the C package out of the image.
+# ============================================================
+
+# .env is deliberately included in the image so the container runs without
+# --env-file. Keep this image local and do not push it to a registry
+.env.bak*
+
+# Windows build output cannot run in a Linux image and is rebuilt in stage 1
+*.exe
+*.o
+*.obj
+
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git files
+.git/
+.gitignore
+
+# Notebooks and archives that are coursework, not application sources
+*.ipynb
+*.zip
+
+# Documentation
+README.md
+*.md
+
+# Output files
+output/
+*.png
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files themselves
+**/Dockerfile
+**/docker-compose.yml
+**/.dockerignore

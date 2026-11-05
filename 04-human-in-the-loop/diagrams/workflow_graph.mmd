@@ -1,0 +1,15 @@
+flowchart TB
+    S([START]) --> K[korra<br/>gpt-4o-mini, parallel_tool_calls=False]
+    K -- "read_student_records" --> R[read_database_node<br/>UNPROTECTED]
+    R --> K
+    K -- "save_student_record (proposal)" --> G{{approval_gate<br/>interrupt BEFORE the write<br/>state checkpointed in PostgreSQL}}
+    G -. "waits for" .-> H[/human reviewer: korra decide ID ...<br/>resumes with Command resume=decision/]
+    G -- "approve / revise" --> W[save_database_node<br/>PROTECTED write, exactly once]
+    W --> K
+    G -- "reject / timeout" --> K
+    G -- "cancel" --> E([END])
+    K -- "plain answer" --> E
+    classDef prot fill:#fde2e2,stroke:#c0392b
+    classDef gate fill:#fff3cd,stroke:#b8860b
+    class W prot
+    class G gate

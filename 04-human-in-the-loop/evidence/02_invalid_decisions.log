@@ -1,0 +1,22 @@
+﻿
+======================================================================
+  S3: DECISION VALIDATION AND AUTHORIZATION
+  2026-10-26 00:15:43
+======================================================================
+# Unauthorized reviewer
+PS> korra decide D-7a980de97f16 approve --by random.user
+REFUSED: 'random.user' is not authorized to approve (authorized reviewers: lia.surguladze, prof.nunez)
+(exit 2)
+# Invalid decision value
+PS> korra decide D-7a980de97f16 maybe --by lia.surguladze
+REFUSED: 'maybe' is not a valid decision (use approve, reject, revise, cancel)
+(exit 2)
+# Unknown decision ID
+PS> korra decide D-000000000000 approve --by lia.surguladze
+REFUSED: unknown decision id D-000000000000
+(exit 2)
+# Still pending after all three refusals
+PS> korra pending
+Pending decisions: 1   (timeout 600 s)
+  D-7a980de97f16  thread=demo-approve  by=student  age=66s  save Ana Lopez <ana@sdsu.edu>
+(exit 0)
